@@ -2,8 +2,8 @@ function string_simulation_template01()
     num_masses = 2;%your code here
     total_mass = 10;%your code here
     tension_force = 5;%your code here
-    string_length = 1;%your code here
-    damping_coeff = 0.7;%your code here
+    string_length = 7;%your code here
+    damping_coeff = 0.67;%your code here
     dx = string_length/(num_masses+1);
     amplitude_Uf = 1;%your code here
     omega_Uf = 1;%your code here
@@ -21,6 +21,20 @@ function string_simulation_template01()
     string_params.L = string_length;
     string_params.c = damping_coeff;
     string_params.dx = dx;
+
+    Fehlberg = struct();
+    Fehlberg.C = [0, 1/4, 3/8, 12/13, 1, 1/2];
+    Fehlberg.B = [16/135, 0, 6656/12825, 28561/56430, -9/50, 2/55;...
+    25/216, 0, 1408/2565, 2197/4104, -1/5, 0];
+    Fehlberg.A = [0,0,0,0,0,0;...
+    1/4, 0,0,0,0,0;...
+    3/32, 9/32, 0,0,0,0;...
+    1932/2197, -7200/2197, 7296/2197, 0,0,0;...
+    439/216, -8, 3680/513, -845/4104, 0,0;...
+    -8/27, 2, -3544/2565, 1859/4104, -11/40, 0];
+    h_ref = 2.8;
+    error_desired = 10^-6;
+    p=5;
     %load string_params into rate function
     my_rate_func = @(t_in,V_in) string_rate_func01(t_in,V_in,string_params);
     %initial conditions
@@ -29,34 +43,6 @@ function string_simulation_template01()
     V0 = [U0;dUdt0];
     tspan = [0,5];%your code here
     %run the integration
-    %[tlist,Vlist] = your_integrator(my_rate_func,tspan,V0,...);
-    %your code to generate an animation of the system
-    [t_list_nonlinear,V_list_nonlinear,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
-    %[t_list_linear,V_list_linear,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_linear_rate,tspan,V0,h_ref,Fehlberg, p, error_desired);
-    %[t_list,X_list] = ode45(my_rate_func,tspan,V0);
-
-    delta_x_list_nonlinear=V_list_nonlinear(1,:)-Veq(1);
-    delta_y_list_nonlinear=V_list_nonlinear(2,:)-Veq(2);
-    delta_theta_list_nonlinear=V_list_nonlinear(3,:)-Veq(3);
-    delta_x_list_linear=V_list_linear(1,:)-Veq(1);
-    delta_y_list_linear=V_list_linear(2,:)-Veq(2);
-    delta_theta_list_linear=V_list_linear(3,:)-Veq(3);
-
+    [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
     
-    figure(1)
-
-    hold on
-    plot(t_list_linear,delta_x_list_linear,"r", "DisplayName","\Deltax linear")
-    plot(t_list_linear,delta_y_list_linear,"b", "DisplayName","\Deltay linear")
-    plot(t_list_linear,delta_theta_list_linear,"g", "DisplayName","\Delta\theta linear")
-    plot(t_list_nonlinear,delta_x_list_nonlinear,"r--", "DisplayName","\Deltax nonlinear")
-    plot(t_list_nonlinear,delta_y_list_nonlinear,"b--", "DisplayName","\Deltay nonlinear")
-    plot(t_list_nonlinear,delta_theta_list_nonlinear,"g--", "DisplayName","\Delta\theta nonlinear")
-    legend("Location","best")
-    xlim([0 5])
-    xlabel("time")
-    ylabel("displacement")
-    title("linear vs non linear from tiny pertubation \epsilon=0.0067")
-    
-
 end
