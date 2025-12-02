@@ -38,8 +38,8 @@ function string_simulation_template01()
     %load string_params into rate function
     my_rate_func = @(t_in,V_in) string_rate_func01(t_in,V_in,string_params);
     %initial conditions
-    U0 = 0;%your code here
-    dUdt0 = 0;%your code here
+    U0 = zeros(num_masses,1);     %your code here
+    dUdt0 = zeros(num_masses,1);%your code here
     V0 = [U0;dUdt0];
     tspan = [0,5];%your code here
     %run the integration
