@@ -54,25 +54,11 @@ function string_simulation_template01()
     %run the integration
     [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
     
-    balls_plot_struct.line_plot = plot(0,0,'k','linewidth',2);
-    balls_plot_struct.point_plot = plot(0,0,'ro','markerfacecolor','r','markersize',7);
-    
-    ball_structs = cell(1,num_masses);
+    ball_plot_struct = initialize_balls_plot;
 
-    for m = 1:num_masses
-        ball_structs{i} = initialize_balls_plot();
-    end 
-
-    N = length(tlist);
+    N = length(t_list);
 
     for k = 1:N
-        for m = 1:num_masses
-            x = Vlist(2*m - 1,k); 
-            y = Vlist(2*m,k);
-
-
-        end
-
-
+        update_balls_plot(ball_plot_struct,V_list(k))
     end
 end
