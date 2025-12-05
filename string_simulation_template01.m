@@ -2,13 +2,13 @@ function string_simulation_template01()
     num_masses = 2; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
-    string_length = 7; %your code here
+    string_length = 20; %your code here
     damping_coeff = 0.67; %your code here
     
     dx = string_length/(num_masses+1);
 
     amplitude_Uf = 1;%your code here
-    omega_Uf = 1; %your code here
+    omega_Uf = 0.3; %your code here
 
     %list of x points (including the two endpoints)
     xlist = linspace(0,string_length,num_masses+2);
@@ -37,8 +37,8 @@ function string_simulation_template01()
     1932/2197, -7200/2197, 7296/2197, 0,0,0;...
     439/216, -8, 3680/513, -845/4104, 0,0;...
     -8/27, 2, -3544/2565, 1859/4104, -11/40, 0];
-    h_ref = 2.8;
-    error_desired = 10^-6;
+    h_ref = 0.1;
+    error_desired = 10^-12;
     p=5;
 
     %load string_params into rate function
@@ -49,18 +49,17 @@ function string_simulation_template01()
     dUdt0 = zeros(num_masses,1);%your code here
     V0 = [U0;dUdt0];
 
-    tspan = [0,10];%your code here
+    tspan = [0,100];%your code here
    
     %run the integration
     [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
     
     hold on;
     ball_plot_struct = initialize_balls_plot();
-    axis([0,string_length,-3,3]);
+    axis([0,string_length,-1.5,1.5]);
 
     for k = 1:length(t_list)
         update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
         drawnow;
-        pause(0.1)
     end
 end
