@@ -49,16 +49,18 @@ function string_simulation_template01()
     dUdt0 = zeros(num_masses,1);%your code here
     V0 = [U0;dUdt0];
 
-    tspan = [0,5];%your code here
+    tspan = [0,10];%your code here
    
     %run the integration
     [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
     
-    ball_plot_struct = initialize_balls_plot;
+    hold on;
+    ball_plot_struct = initialize_balls_plot();
+    axis([0,string_length,-3,3]);
 
-    N = length(t_list);
-
-    for k = 1:N
-        update_balls_plot(ball_plot_struct,V_list(k))
+    for k = 1:length(t_list)
+        update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
+        drawnow;
+        pause(0.1)
     end
 end
