@@ -37,9 +37,6 @@ function dVdt = string_rate_func01(t,V,string_params)
 
     d2Udt2 = (term1+term2)/(M/n);
 
-    
-    
-    % %your code here (may take several lines)
     %assemble state derivative
     dVdt = [dUdt;d2Udt2];
 end

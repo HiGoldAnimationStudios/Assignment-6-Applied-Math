@@ -1,14 +1,14 @@
 function string_simulation_template01()
-    num_masses = 2; %your code here
+    num_masses = 3; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
     string_length = 20; %your code here
-    damping_coeff = 0.67; %your code here
+    damping_coeff = 0.0067; %your code here
     
     dx = string_length/(num_masses+1);
 
     amplitude_Uf = 1;%your code here
-    omega_Uf = 0.3; %your code here
+    omega_Uf = 0.7746; %your code here
 
     %list of x points (including the two endpoints)
     xlist = linspace(0,string_length,num_masses+2);
@@ -54,6 +54,10 @@ function string_simulation_template01()
     %run the integration
     [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
     
+    [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
+    [Ur_mat,lambda_mat] = eig(K_mat,M_mat)
+    omega_r=sqrt(lambda_mat)
+
     hold on;
     ball_plot_struct = initialize_balls_plot();
     axis([0,string_length,-1.5,1.5]);
