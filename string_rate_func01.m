@@ -33,7 +33,7 @@ function dVdt = string_rate_func01(t,V,string_params)
     dU_right = [0;dUdt(1:end-1)];
 
     term1 = (Tf/dx)*(U_left-2*U+U_right);
-    term2 = (Tf/dx)*(dU_left-2*dUdt+dU_right);
+    term2 = (c/dx)*(dU_left-2*dUdt+dU_right);
 
     d2Udt2 = (term1+term2)/(M/n);
 

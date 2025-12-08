@@ -1,6 +1,6 @@
-%DISCRETE
+%CONTINUOUS
 
-function string_simulation_template01()
+function string_simulation_template02()
     num_masses = 3; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
