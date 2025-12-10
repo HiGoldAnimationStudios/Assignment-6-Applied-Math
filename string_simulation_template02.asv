@@ -1,7 +1,7 @@
 %CONTINUOUS
 
 function string_simulation_template02()
-    num_masses = 200; %your code here
+    num_masses = 50; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
     string_length = 20; %your code here
@@ -32,7 +32,6 @@ function string_simulation_template02()
     w_pulse=string_length/20;
     h_pulse=7;
     xlist = linspace(0,string_length,num_masses+2);
-    xlist = xlist(2:end-1);
 
     U0 = triangle_pulse(xlist,w_pulse, h_pulse)';   
     dUdt0 = -c*triangle_pulse_derivative(xlist,w_pulse, h_pulse)';
@@ -54,31 +53,24 @@ function string_simulation_template02()
 
     my_rate_func = @(t_in,V_in) string_rate_func01(t_in,V_in,string_params);
 
-    % tspan = [0,3*string_length/c];
+    tspan = [0,3*string_length/c];
    
-    % [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
+    [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
     
-    tspan = linspace(0,3*string_length/c,5001);
-    [t_list,V_list] = ode45(my_rate_func,tspan,V0);
-    V_list = V_list';
-    
-
     hold on;
     ball_plot_struct = initialize_balls_plot();
     axis([0,string_length,-10,10]);
-    xlabel("x")
-    ylabel("f(x)")
-    tracking_line=plot(0,0,"b");
+    %tracking_line=plot(0,0,"b");
 
     for k = 1:length(t_list)
         update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
-        x = c*t_list(k)+.5*w_pulse;
+        x = string_length-c*t+.5*w_pulse*c;
         x = mod(x,2*string_length);
         if x > string_length
             x = 2*string_length - x;
         end
-        set(tracking_line, "xdata", [x,x] , "ydata",  [-8,8])
-        %xline(x)
+        %set(tracking_line, "xdata", x , "ydata",  )
+        xline(x)
         drawnow;
     end
 end

@@ -1,6 +1,6 @@
-%CONTINUOUS
+%modal analysis
 
-function string_simulation_template02()
+function string_simulation_template03()
     num_masses = 200; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
@@ -16,14 +16,24 @@ function string_simulation_template02()
     string_params.c = damping_coeff;
     string_params.dx = dx;
     
+    mode_index=1;
+
     [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
     [Ur_mat,lambda_mat] = eig(K_mat,M_mat);
-    omega_r=sqrt(lambda_mat);
+
+    
+    
+
+    omega_r=sqrt(lambda_mat(mode_index,mode_index));
     amplitude_Uf = 1;
     omega_Uf = omega_r;
 
-    Uf_func = @(t_in) 0;
-    dUfdt_func = @(t_in) 0;
+    %Uf_func = @(t_in) 0;
+    %dUfdt_func = @(t_in) 0;
+
+    Uf_func = @(t_in) amplitude_Uf*cos(omega_Uf*t_in);
+    dUfdt_func = @(t_in) -omega_Uf*amplitude_Uf*sin(omega_Uf*t_in);
+
     string_params.Uf_func = Uf_func;
     string_params.dUfdt_func = dUfdt_func;
 
@@ -34,30 +44,14 @@ function string_simulation_template02()
     xlist = linspace(0,string_length,num_masses+2);
     xlist = xlist(2:end-1);
 
-    U0 = triangle_pulse(xlist,w_pulse, h_pulse)';   
-    dUdt0 = -c*triangle_pulse_derivative(xlist,w_pulse, h_pulse)';
+    %U0 = triangle_pulse(xlist,w_pulse, h_pulse)';   
+    %dUdt0 = -c*triangle_pulse_derivative(xlist,w_pulse, h_pulse)';
+    U0 = zeros(num_masses,1);     
+    dUdt0 = zeros(num_masses,1);
     V0 = [U0;dUdt0];
-
-    Fehlberg = struct();
-    Fehlberg.C = [0, 1/4, 3/8, 12/13, 1, 1/2];
-    Fehlberg.B = [16/135, 0, 6656/12825, 28561/56430, -9/50, 2/55;...
-    25/216, 0, 1408/2565, 2197/4104, -1/5, 0];
-    Fehlberg.A = [0,0,0,0,0,0;...
-    1/4, 0,0,0,0,0;...
-    3/32, 9/32, 0,0,0,0;...
-    1932/2197, -7200/2197, 7296/2197, 0,0,0;...
-    439/216, -8, 3680/513, -845/4104, 0,0;...
-    -8/27, 2, -3544/2565, 1859/4104, -11/40, 0];
-    h_ref = 0.1;
-    error_desired = 10^-12;
-    p=5;
 
     my_rate_func = @(t_in,V_in) string_rate_func01(t_in,V_in,string_params);
 
-    % tspan = [0,3*string_length/c];
-   
-    % [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
-    
     tspan = linspace(0,3*string_length/c,5001);
     [t_list,V_list] = ode45(my_rate_func,tspan,V0);
     V_list = V_list';
@@ -65,20 +59,12 @@ function string_simulation_template02()
 
     hold on;
     ball_plot_struct = initialize_balls_plot();
-    axis([0,string_length,-10,10]);
+    axis([0,string_length,-5,5]);
     xlabel("x")
     ylabel("f(x)")
-    tracking_line=plot(0,0,"b");
 
     for k = 1:length(t_list)
         update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
-        x = c*t_list(k)+.5*w_pulse;
-        x = mod(x,2*string_length);
-        if x > string_length
-            x = 2*string_length - x;
-        end
-        set(tracking_line, "xdata", [x,x] , "ydata",  [-8,8])
-        %xline(x)
         drawnow;
     end
 end

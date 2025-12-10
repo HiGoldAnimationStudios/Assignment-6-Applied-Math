@@ -47,11 +47,11 @@ function string_simulation_template01()
     my_rate_func = @(t_in,V_in) string_rate_func01(t_in,V_in,string_params);
     
     %initial conditions
-    U0 = zeros(num_masses,1);     %your code here
-    dUdt0 = zeros(num_masses,1);%your code here
+    U0 = zeros(num_masses,1);     
+    dUdt0 = zeros(num_masses,1);
     V0 = [U0;dUdt0];
 
-    tspan = [0,100];%your code here
+    tspan = [0,100];
    
     %run the integration
     [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
