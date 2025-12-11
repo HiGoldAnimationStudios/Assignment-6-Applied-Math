@@ -5,12 +5,12 @@ function string_simulation_template01()
     total_mass = 10; %your code here
     tension_force = 5; %your code here
     string_length = 20; %your code here
-    damping_coeff = 0.0015; %your code here
+    damping_coeff = 0.00015; %your code here
     
     dx = string_length/(num_masses+1);
 
     amplitude_Uf = 1;%your code here
-    omega_Uf = 0.7746; %your code here
+    omega_Uf = 0.4483; %your code here
 
     %list of x points (including the two endpoints)
     xlist = linspace(0,string_length,num_masses+2);
@@ -57,8 +57,8 @@ function string_simulation_template01()
     [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
     
     [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
-    [Ur_mat,lambda_mat] = eig(K_mat,M_mat) %take UR_mat and plot the mode shape 
-    omega_r = sqrt(lambda_mat)
+    [Ur_mat,lambda_mat] = eig(K_mat,M_mat); %take UR_mat and plot the mode shape 
+    omega_r = sqrt(lambda_mat);
 
     hold on;
 
@@ -70,16 +70,12 @@ function string_simulation_template01()
         drawnow;
     end
     
-    mode_data = zeros(3, length(t_list));
-
     %generating the mode shape plot
     
-    for i = 1:3
-        V_norm = V_list(i,:) ./ max(abs(V_list(i,:)));
-        mode_data(i,:) = V_norm;
-    end
-  
+    x_distances = linspace(0, (num_masses-1)*dx, num_masses);
+    first_mode = Ur_mat(:,1);
+
     figure;
-    
+    plot(x_distances, first_mode)
     
 end
