@@ -19,17 +19,13 @@ function string_simulation_template03()
     mode_index=1;
 
     [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
-    [Ur_mat,lambda_mat] = eig(K_mat,M_mat);
-
-    
-    
+    [Ur_mat,lambda_mat] = eig(K_mat,M_mat); 
 
     omega_r=sqrt(lambda_mat(mode_index,mode_index));
     amplitude_Uf = 1;
     omega_Uf = omega_r;
 
-    %Uf_func = @(t_in) 0;
-    %dUfdt_func = @(t_in) 0;
+    mode = Ur_mat(:,mode_index);
 
     Uf_func = @(t_in) amplitude_Uf*cos(omega_Uf*t_in);
     dUfdt_func = @(t_in) -omega_Uf*amplitude_Uf*sin(omega_Uf*t_in);
