@@ -9,7 +9,7 @@ function string_simulation_template03()
 
     fig1=figure(1);
     
-    num_masses = 50; %your code here
+    num_masses = 200; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
     string_length = 20; %your code here
@@ -76,7 +76,7 @@ function string_simulation_template03()
     xlist_WE=xlist;
     mode_shape_WE=[0,mode_shape_WE,0];
     hold on;
-    mode_shape_plot=plot(0,0,'-','color','b','LineWidth',3);
+    mode_shape_plot=plot(0,0,'o-','color','b','LineWidth',2,'markerfacecolor','k','markeredgecolor','k','markersize',5);
     set(mode_shape_plot,'xdata', xlist, 'ydata', q*mode_shape_WE)
 
     ball_plot_struct = initialize_balls_plot();
@@ -92,7 +92,7 @@ function string_simulation_template03()
         drawnow;
         current_frame = getframe(fig1);
         %write the frame to the video
-        writeVideo(writerObj,current_frame);
+        % writeVideo(writerObj,current_frame);
     end
     close(writerObj)
 
@@ -113,23 +113,23 @@ function string_simulation_template03()
         mode_shape_LA = mode_shape_LA/max(abs(mode_shape_LA));
 
         mode_shape_LA = mode_shape_LA*sign(mode_shape_LA(2));
-        omega_n=sqrt(lambda_mat(mode_index,mode_index));
+        omega_n=sqrt(lambda_mat(n+1-mode_index,n+1-mode_index));
         omega_list(j)=omega_n;
 
         xlist = linspace(0,string_length,n+2);
 
         subplot(length(n_list),1,j)
         hold on
-        title(sprintf('Discrete %.3g masses vs Continuous', n))
+        title("___ masses")
         xlabel("x")
         ylabel("U(t,x)")
         legend();
         plot(xlist_WE, mode_shape_WE,'r','LineWidth',2,"DisplayName","Continuous")
-        plot(xlist,mode_shape_LA,'o-','color','b','LineWidth',2,'markerfacecolor','k','markeredgecolor','k','markersize',2, "DisplayName","IDK");
+        plot(xlist,mode_shape_LA,'o-','color','b','LineWidth',2,'markerfacecolor','k','markeredgecolor','k','markersize',5, "DisplayName","IDK");
     end
-
+    
     figure(3);
-    semilogy(n_list, omega_list,'o-','color','k','LineWidth',2,'markerfacecolor','r','markeredgecolor','r','markersize',2);
+    semilogy(n_list, omega_list,'o-','color','k','LineWidth',2,'markerfacecolor','r','markeredgecolor','r','markersize',5);
     hold on;
     semilogy(n_list, ones(length(n_list),1)*omega_Uf,'g--');
     legend()
