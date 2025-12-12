@@ -62,20 +62,20 @@ function string_simulation_template01()
 
     hold on;
 
-    ball_plot_struct = initialize_balls_plot();
-    axis([0,string_length,-10,10]);
-
-    for k = 1:length(t_list)
-        update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
-        drawnow;
-    end
-    
     %generating the mode shape plot
     
     x_distances = linspace(0, (num_masses-1)*dx, num_masses);
     first_mode = Ur_mat(:,1);
 
-    figure;
     plot(x_distances, first_mode)
+
+    ball_plot_struct = initialize_balls_plot();
+    axis([0,string_length,-15,15]);
+
+    for k = 1:length(t_list)
+        update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
+        drawnow;
+    end
+   
     
 end
