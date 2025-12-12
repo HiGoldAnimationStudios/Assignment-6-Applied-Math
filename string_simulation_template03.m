@@ -18,14 +18,30 @@ function string_simulation_template03()
     
     mode_index=4; 
 
+    rho = total_mass/string_length;
+    c=sqrt(tension_force/rho);
+    w_pulse=string_length/20;
+    h_pulse=7;
+    
+
     %[M_mat,K_mat] = construct_2nd_order_matrices(string_params);
-    %[Ur_mat,lambda_mat] = eig(K_mat,M_mat); 
+    % [Ur_mat,lambda_mat] = eig(K_mat,M_mat); 
 
-    omega_r=sqrt(lambda_mat(mode_index,mode_index));
-    amplitude_Uf = 1;
-    omega_Uf = omega_r;
+    % mode_shape_LA = Ur_mat(:,mode_index);
 
-    mode = Ur_mat(:,mode_index);
+    %omega_n=sqrt(lambda_mat(mode_index,mode_index));
+    omega_n_spatial=pi*mode_index/string_length;
+    omega_n=c*omega_n_spatial;
+
+    xlist = linspace(0,string_length,num_masses+2);
+    xlist = xlist(2:end-1);
+
+    mode_shape_WE=sin(omega_n_spatial*xlist);
+
+    amplitude_Uf = 3;
+    omega_Uf = omega_n;
+
+    %mode = Ur_mat(:,mode_index);
 
     Uf_func = @(t_in) amplitude_Uf*cos(omega_Uf*t_in);
     dUfdt_func = @(t_in) -omega_Uf*amplitude_Uf*sin(omega_Uf*t_in);
@@ -33,12 +49,7 @@ function string_simulation_template03()
     string_params.Uf_func = Uf_func;
     string_params.dUfdt_func = dUfdt_func;
 
-    rho = total_mass/string_length;
-    c=sqrt(tension_force/rho);
-    w_pulse=string_length/20;
-    h_pulse=7;
-    xlist = linspace(0,string_length,num_masses+2);
-    xlist = xlist(2:end-1);
+     
 
     %U0 = triangle_pulse(xlist,w_pulse, h_pulse)';   
     %dUdt0 = -c*triangle_pulse_derivative(xlist,w_pulse, h_pulse)';
@@ -52,8 +63,12 @@ function string_simulation_template03()
     [t_list,V_list] = ode45(my_rate_func,tspan,V0);
     V_list = V_list';
     
-
+    xlist=[0,xlist,string_length];
+    mode_shape_WE=[0,mode_shape_WE,0];
     hold on;
+    mode_shape_plot=plot(0,0,'o-','color','b','LineWidth',2,'markerfacecolor','k','markeredgecolor','k','markersize',5);
+    set(mode_shape_plot,'xdata', xlist, 'ydata', mode_shape_WE)
+
     ball_plot_struct = initialize_balls_plot();
     axis([0,string_length,-5,5]);
     xlabel("x")
