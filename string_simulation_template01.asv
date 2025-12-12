@@ -1,15 +1,29 @@
 %DISCRETE
 
 function string_simulation_template01()
+
     num_masses = 5; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
     string_length = 20; %your code here
-    damping_coeff = 0.0015; %your code here
-    
-    dx = string_length/(num_masses+1);
+    damping_coeff = 0.0001; %your code here
 
-    amplitude_Uf = 3;%your code here
+    dx = string_length/(num_masses+1);
+    
+    string_params = struct();
+    string_params.n = num_masses;
+    string_params.M = total_mass;
+    string_params.Tf = tension_force;
+    string_params.L = string_length;
+    string_params.c = damping_coeff;
+    string_params.dx = dx;
+
+    mode_index = 2
+
+    
+
+
+    amplitude_Uf = 1;%your code here
     omega_Uf = 0.4483; %your code here
 
     %list of x points (including the two endpoints)
@@ -51,12 +65,14 @@ function string_simulation_template01()
     dUdt0 = zeros(num_masses,1);
     V0 = [U0;dUdt0];
 
-    %tspan = [0,100];
-    tspan = linspace(0,20*(2*pi))
+    tspan = [0,100];
    
     %run the integration
-    [t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
-    
+    %[t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
+    tspan = linspace(0,3*string_length/omega_Uf,5001);
+    [t_list,V_list] = ode45(my_rate_func,tspan,V0);
+    V_list = V_list';
+
     [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
     [Ur_mat,lambda_mat] = eig(K_mat,M_mat); %take UR_mat and plot the mode shape 
     omega_r = sqrt(lambda_mat);
@@ -65,19 +81,19 @@ function string_simulation_template01()
 
     %generating the mode shape plot
     
-    maxU = max(max(V_list(:,1:num_masses)));
-    minU = min(min(V_list(:,1:num_masses)));
-
-    h = max([abs(maxU), abs(minU), amplitude_Uf]);
-
+    
     x_distances = linspace(0, string_length, num_masses);
     first_mode = Ur_mat(:,1);
 
     
     plot(x_distances, first_mode)
 
+    maxU = max(max(V_list(1:num_masses,:)));
+    minU = min(min(V_list(1:num_masses,:)));
+
+    h = max([abs(maxU), abs(minU), amplitude_Uf]);
+
     ball_plot_struct = initialize_balls_plot();
-    axis([0,string_length,-15,15]);
 
     axis([0,string_length,-1.1*h,1.1*h]);
 
