@@ -31,12 +31,9 @@ function string_simulation_template03()
     w_pulse=string_length/20;
     h_pulse=7;
     
-
     %[M_mat,K_mat] = construct_2nd_order_matrices(string_params);
     % [Ur_mat,lambda_mat] = eig(K_mat,M_mat); 
-
     % mode_shape_LA = Ur_mat(:,mode_index);
-
     %omega_n=sqrt(lambda_mat(mode_index,mode_index));
     omega_n_spatial=pi*mode_index/string_length;
     omega_n=c*omega_n_spatial;
@@ -67,7 +64,7 @@ function string_simulation_template03()
 
     my_rate_func = @(t_in,V_in) string_rate_func01(t_in,V_in,string_params);
 
-    tspan = linspace(0,3*string_length/c,5001);
+    tspan = linspace(0,3*string_length/c,501);
     [t_list,V_list] = ode45(my_rate_func,tspan,V0);
     V_list = V_list';
     
@@ -85,10 +82,14 @@ function string_simulation_template03()
     for k = 1:length(t_list)
         update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
         drawnow;
+        current_frame = getframe(fig1);
+        %write the frame to the video
+        writeVideo(writerObj,current_frame);
     end
+    close(writerObj)
 
     n_list=[5,20,67,100];
-    omega_list=[];
+    omega_list=[0,0,0,0];
     figure(2);
 
     for j=1:length(n_list)
@@ -102,13 +103,13 @@ function string_simulation_template03()
         mode_shape_LA = [0;Ur_mat(:,mode_index);0];
         mode_shape_LA = mode_shape_LA/max(abs(mode_shape_LA));
         omega_n=sqrt(lambda_mat(n+1-mode_index,n+1-mode_index));
-        omega_list(end+1)=omega_n;
+        omega_list(j)=omega_n;
 
         xlist = linspace(0,string_length,n+2);
 
         subplot(length(n_list),1,j)
         hold on
-
+        
         plot(xlist,mode_shape_LA,'o-','color','b','LineWidth',2,'markerfacecolor','k','markeredgecolor','k','markersize',5);
     
     end

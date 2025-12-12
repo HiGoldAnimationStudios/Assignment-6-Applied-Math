@@ -89,7 +89,11 @@ function string_simulation_template02()
         set(tracking_line, "xdata", [x,x] , "ydata",  [-8,8])
         %xline(x)
         drawnow;
+        current_frame = getframe(fig1);
+        %write the frame to the video
+        writeVideo(writerObj,current_frame);
     end
+    close(writerObj)
 end
 
 %triangle pulse function
