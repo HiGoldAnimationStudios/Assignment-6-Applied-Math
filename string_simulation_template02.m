@@ -68,11 +68,12 @@ function string_simulation_template02()
     axis([0,string_length,-10,10]);
     xlabel("x")
     ylabel("f(x)")
+    title("Traveling Wave with Centroid Line")
     tracking_line=plot(0,0,"b");
 
     for k = 1:length(t_list)
         update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
-        x = c*t_list(k)+.5*w_pulse;
+        x = c*t_list(k)*0.995+.5*w_pulse;
         x = mod(x,2*string_length);
         if x > string_length
             x = 2*string_length - x;
