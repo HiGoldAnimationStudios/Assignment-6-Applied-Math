@@ -2,7 +2,8 @@
 
 function string_simulation_template01()
 
-    mypath1 = 'C:\Users\jvidaurrazaga\Downloads\';
+    %mypath1 = 'C:\Users\jvidaurrazaga\Downloads\';
+    mypath1 = 'C:\Users\llin\Downloads\';
     fname='string_1.mp4';
     input_fname = [mypath1,fname];
     writerObj = VideoWriter(input_fname);
@@ -10,7 +11,7 @@ function string_simulation_template01()
 
     fig1=figure(1);
 
-    num_masses = 50; %your code here
+    num_masses = 3; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
     string_length = 20; %your code here
@@ -26,7 +27,7 @@ function string_simulation_template01()
     string_params.c = damping_coeff;
     string_params.dx = dx;
 
-    mode_index = 5;
+    mode_index = 3;
 
     [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
     [Ur_mat,lambda_mat] = eig(K_mat,M_mat); %take UR_mat and plot the mode shape 
@@ -79,7 +80,7 @@ function string_simulation_template01()
    
     %run the integration
     %[t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
-    tspan = linspace(0,40*(2*pi)/omega_Uf,5000+1);
+    tspan = linspace(0,(20 + 0.75)*(2*pi)/omega_Uf,5000+1);
     [t_list,V_list] = ode45(my_rate_func,tspan,V0);
     V_list = V_list';
 
@@ -103,7 +104,9 @@ function string_simulation_template01()
     ball_plot_struct = initialize_balls_plot();
 
     axis([0,string_length,-1.1*h,1.1*h]);
-
+    xlabel('x-distance')
+    ylabel('y-distance')
+    legend('mode prediction', 'mode simulation')
     for k = 1:length(t_list)
         update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
         drawnow;
