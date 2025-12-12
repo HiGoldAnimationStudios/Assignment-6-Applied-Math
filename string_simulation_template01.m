@@ -2,6 +2,14 @@
 
 function string_simulation_template01()
 
+    mypath1 = 'C:\Users\jvidaurrazaga\Downloads\';
+    fname='string_1.mp4';
+    input_fname = [mypath1,fname];
+    writerObj = VideoWriter(input_fname);
+    open(writerObj);
+
+    fig1=figure(1);
+
     num_masses = 50; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
@@ -99,7 +107,11 @@ function string_simulation_template01()
     for k = 1:length(t_list)
         update_balls_plot(ball_plot_struct,V_list(:,k),t_list(k),string_params);
         drawnow;
+        current_frame = getframe(fig1);
+        %write the frame to the video
+        writeVideo(writerObj,current_frame);
     end
    
+    close(writerObj)
     
 end

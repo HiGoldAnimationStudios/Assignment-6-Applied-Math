@@ -1,6 +1,14 @@
 %modal analysis
 
 function string_simulation_template03()
+    mypath1 = 'C:\Users\jvidaurrazaga\Downloads\';
+    fname='string_3.mp4';
+    input_fname = [mypath1,fname];
+    writerObj = VideoWriter(input_fname);
+    open(writerObj);
+
+    fig1=figure(1);
+    
     num_masses = 200; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
