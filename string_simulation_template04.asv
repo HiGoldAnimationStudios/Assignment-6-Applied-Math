@@ -1,10 +1,6 @@
-%modal analysis
+%harmonics?
 
-function string_simulation_template03()
-    
-
-    fig1=figure(1);
-    
+function string_simulation_template04() 
     num_masses = 50; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
@@ -48,12 +44,8 @@ function string_simulation_template03()
     dUfdt_func = @(t_in) -omega_Uf*amplitude_Uf*sin(omega_Uf*t_in);
 
     string_params.Uf_func = Uf_func;
-    string_params.dUfdt_func = dUfdt_func;
-
-     
-
-    %U0 = triangle_pulse(xlist,w_pulse, h_pulse)';   
-    %dUdt0 = -c*triangle_pulse_derivative(xlist,w_pulse, h_pulse)';
+    string_params.dUfdt_func = dUfdt_func;     
+    
     U0 = zeros(num_masses,1);     
     dUdt0 = zeros(num_masses,1);
     V0 = [U0;dUdt0];
@@ -61,56 +53,52 @@ function string_simulation_template03()
     my_rate_func = @(t_in,V_in) string_rate_func01(t_in,V_in,string_params);
 
     % tspan = linspace(0,3*string_length/c,501);
-    tspan = linspace(0,20*(2*pi/omega_Uf),501);
+    tspan = linspace(0,20*(2*pi/omega_Uf),2001);
     [t_list,V_list] = ode45(my_rate_func,tspan,V0);
     V_list = V_list';
     
     q = max(max(abs(V_list(1:num_masses,:))));
     
-    figure(1);
-    xlist=[0,xlist,string_length];
-    xlist_WE=xlist;
-    mode_shape_WE=[0,mode_shape_WE,0];
-   
-    n_list=[5,20,67,100];
-    omega_list=[0,0,0,0];
-    figure(2);
-    title("Modes for different number of masses")
+    mode_list=linspace(1,10,10);
+    omega_list_discrete=linspace(1,10,10);
+    omega_list_continuous=linspace(1,10,10);
+    n=10;
+    %n=500;
 
-    for j=1:length(n_list)
-        n=n_list(j);
+    figure(1);
+    for j=1:length(mode_list)
+        mode_index=mode_list(j);
         string_params.n=n;
         string_params.dx=string_length/(n+1);
 
         [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
         [Ur_mat,lambda_mat] = eig(K_mat,M_mat); 
 
-        mode_shape_LA = [0;Ur_mat(:,mode_index);0];
-        mode_shape_LA = mode_shape_LA/max(abs(mode_shape_LA));
+        omega_n_discrete(j)=sqrt(lambda_mat(mode_index,mode_index));
+        omega_n_spatial=pi*mode_index/string_length;
+        omega_n_continuous(j)=c*omega_n_spatial;
 
-        mode_shape_LA = mode_shape_LA*sign(mode_shape_LA(2));
+
+
         omega_n=sqrt(lambda_mat(mode_index,mode_index));
-        omega_list(j)=omega_n;
+        omega_list_discrete(j)=omega_n;
 
-        xlist = linspace(0,string_length,n+2);
+        string_params.n=n;
+        string_params.dx=string_length/(n+1);
 
-        subplot(length(n_list),1,j)
-        hold on
-        title(sprintf('Discrete %.3g masses vs Continuous', n))
-        xlabel("x")
-        ylabel("U(t,x)")
-        legend();
-        plot(xlist_WE, mode_shape_WE,'r','LineWidth',3,"DisplayName","Continuous")
-        plot(xlist,mode_shape_LA,'o-','color','b','LineWidth',2,'markerfacecolor','b','markeredgecolor','k','markersize',2, "DisplayName","Discrete");
+        [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
+        [Ur_mat,lambda_mat] = eig(K_mat,M_mat);         
+
+        omega_n=sqrt(lambda_mat(mode_index,mode_index));
+        omega_list_continuous(j)=omega_n;
     end
 
-    figure(3);
-    semilogy(n_list, omega_list,'o-','color','k','LineWidth',2,'markerfacecolor','r','markeredgecolor','r','markersize',2,"DisplayName","Discrete");
-    hold on;
-    semilogy(n_list, ones(length(n_list),1)*omega_Uf,'g',"LineWidth",2,"DisplayName","Continuous");
-    legend()
-    xlabel("number of masses")
-    ylabel("resonant frequency")
-    title("Resonant Frequency vs Number of Masses")
+    hold on
+    title("words")
+    xlabel("mode index")
+    ylabel("omega")
+    legend();
+    plot(mode_list,omega_list_discrete,"r","DisplayName","Discrete")
+    plot(mode_list,omega_list_continuous,"b","DisplayName","Continuous")
 end
 
