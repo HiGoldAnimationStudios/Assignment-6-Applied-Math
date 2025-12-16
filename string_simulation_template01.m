@@ -11,7 +11,7 @@ function string_simulation_template01()
 
     fig1=figure(1);
 
-    num_masses = 3; %your code here
+    num_masses = 5; %your code here
     total_mass = 10; %your code here
     tension_force = 5; %your code here
     string_length = 20; %your code here
@@ -27,7 +27,7 @@ function string_simulation_template01()
     string_params.c = damping_coeff;
     string_params.dx = dx;
 
-    mode_index = 3;
+    mode_index = 5;
 
     [M_mat,K_mat] = construct_2nd_order_matrices(string_params);
     [Ur_mat,lambda_mat] = eig(K_mat,M_mat); %take UR_mat and plot the mode shape 
@@ -80,7 +80,7 @@ function string_simulation_template01()
    
     %run the integration
     %[t_list,V_list,~, ~, ~, ~] = explicit_RK_variable_step_integration(my_rate_func,tspan,V0,h_ref,Fehlberg, p, error_desired);
-    tspan = linspace(0,(20 + 0.75)*(2*pi)/omega_Uf,5000+1);
+    tspan = linspace(0,(20 + 0.75)*(2*pi)/omega_Uf,2000+1);
     [t_list,V_list] = ode45(my_rate_func,tspan,V0);
     V_list = V_list';
 
